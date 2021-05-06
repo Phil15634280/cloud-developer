@@ -34,13 +34,17 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
     if (!image_url) {
       res.status(400).send("image_url is required");
     }
-    const filteredImageFileUrl = await filterImageFromURL(image_url);
-    res.status(200).sendFile(filteredImageFileUrl, function (error) {
-      if (error) {
-        console.log(`Error: ${error}`);
-      }
-      deleteLocalFiles([filteredImageFileUrl]);
-    });
+    try {
+      const filteredImageFileUrl = await filterImageFromURL(image_url);
+      res.status(200).sendFile(filteredImageFileUrl, function (error) {
+        if (error) {
+          console.log(`Error: ${error}`);
+        }
+        deleteLocalFiles([filteredImageFileUrl]);
+      });
+    } catch (error) {
+      res.status(422).send("Unable to process supplied image from image_url");
+    }
   });
 
   // Root Endpoint
